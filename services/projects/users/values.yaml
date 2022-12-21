@@ -4,6 +4,8 @@
 
 replicaCount: 1
 
+configName: test
+
 image:
   repository: nginx
   pullPolicy: IfNotPresent

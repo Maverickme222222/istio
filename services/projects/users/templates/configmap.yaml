@@ -1,5 +1,5 @@
 {{- include "common.configmap" (list . "users.configmap") -}}
 {{- define "users.configmap" -}}
 data:
-  myvalue: "Hello World"
+  myvalue: {{ .Values.configName | quote }}
 {{- end -}}
