@@ -1,0 +1,11 @@
+terraform_output:
+  dev:
+    secret_arn:
+      sensitive: false
+      type: string
+      value: secret_arn_dev
+  qa:
+    secret_arn:
+      sensitive: false
+      type: string
+      value: secret_arn_qa
