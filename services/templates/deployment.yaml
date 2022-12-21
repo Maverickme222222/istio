@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.appConfig.appName }}-deployment
+  labels: {{- include "helpers.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {{- include "helpers.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels: {{- include "helpers.selectorLabels" . | nindent 6 }}
+    spec:
+      containers:
+        - image: {{ .Values.deployment.image.repository }}/{{ .Values.deployment.image.name }}:{{ .Values.deployment.image.tag }}
+          imagePullPolicy: Always
+          name: {{ .Values.appConfig.appName }}-pod
+          ports:
+            - containerPort: 9090
