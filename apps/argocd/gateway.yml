@@ -1,0 +1,60 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: gateway
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+    - port:
+        number: 80
+        name: http
+        protocol: HTTP
+      hosts:
+        - '*'
+
+# ---
+# apiVersion: networking.istio.io/v1alpha3
+# kind: VirtualService
+# metadata:
+#   name: helloweb
+# spec:
+#   hosts:
+#     - 'helloweb.dev'
+#     - 'helloweb.canary'
+#   gateways:
+#     - gateway
+#   http:
+#     - match:
+#       - headers:
+#           x-testing:
+#             exact: tester
+#       route:
+#       - destination:
+#           host: fastapi.default.svc.cluster.local
+#           subset: v2
+#           port:
+#             number: 8080
+#     - route:
+#       - destination:
+#           host: fastapi.default.svc.cluster.local
+#           subset: v1
+#           port:
+#             number: 8080
+
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: helloweb
+spec:
+  hosts:
+    - 'helloweb.dev'
+  gateways:
+    - gateway
+  http:
+    - route:
+      - destination:
+          host: fastapi.default.svc.cluster.local
+          port:
+            number: 8080

@@ -1,0 +1,34 @@
+apiVersion: config.istio.io/v1alpha1
+kind: RouteRule
+metadata:
+  name: route-to-v1
+spec:
+  destination:
+    name: myservice
+  precedence: 1
+  match:
+    headers:
+      version:
+        exact: v1
+  route:
+    - labels:
+        version: v1
+      weight: 100
+
+---
+apiVersion: config.istio.io/v1alpha1
+kind: RouteRule
+metadata:
+  name: route-to-v2
+spec:
+  destination:
+    name: myservice
+  precedence: 2
+  match:
+    headers:
+      version:
+        exact: v2
+  route:
+    - labels:
+        version: v2
+      weight: 100

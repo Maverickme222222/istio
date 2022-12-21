@@ -1,0 +1,187 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: users
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: users
+  labels:
+    app: users
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: users
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: users
+        version: v1
+        sidecar.istio.io/inject: "true"
+    spec:
+      serviceAccountName: users
+      containers:
+        - image: registry.hub.docker.com/maverickme22/users:v0.0.3
+          imagePullPolicy: Always
+          name: svc
+          ports:
+            - containerPort: 9090
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: users
+  labels:
+    app: users
+spec:
+  selector:
+    app: users
+  ports:
+  - name: grpc # important!
+    protocol: TCP
+    port: 9090
+    targetPort: 9090
+    appProtocol: grpc
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: emails
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: emails
+  labels:
+    app: emails
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: emails
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: emails
+        version: v1
+        sidecar.istio.io/inject: "true"
+    spec:
+      serviceAccountName: emails
+      containers:
+        - image: registry.hub.docker.com/maverickme22/emails:v0.0.1
+          imagePullPolicy: Always
+          name: svc
+          ports:
+            - containerPort: 9090
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: emails
+  labels:
+    app: emails
+spec:
+  selector:
+    app: emails
+  ports:
+  - name: grpc # important!
+    protocol: TCP
+    port: 9090
+    targetPort: 9090
+    appProtocol: grpc
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: fastapi
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fastapi
+  labels:
+    app: fastapi
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fastapi
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: fastapi
+        version: v1
+        sidecar.istio.io/inject: "true"
+    spec:
+      serviceAccountName: fastapi
+      containers:
+        - image: registry.hub.docker.com/maverickme22/fastapi:v0.0.3
+          imagePullPolicy: Always
+          name: web
+          ports:
+            - containerPort: 8080
+          env:
+            - name: USERS_SVC
+              value: 'users:9090'
+            - name: EMAILS_SVC
+              value: 'emails:9090'
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: fastapi
+  labels:
+    app: fastapi
+spec:
+  selector:
+    app: fastapi
+  ports:
+    - port: 8080
+      name: http-fastapi
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: users-v2
+  labels:
+    app: users
+    version: v2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: users
+      version: v2
+  template:
+    metadata:
+      labels:
+        app: users
+        version: v2
+        sidecar.istio.io/inject: "true"
+    spec:
+      serviceAccountName: users
+      containers:
+        - image: registry.hub.docker.com/maverickme22/users:v0.0.3
+          imagePullPolicy: Always
+          name: svc
+          ports:
+            - containerPort: 9090
+
+---

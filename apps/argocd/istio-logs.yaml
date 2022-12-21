@@ -1,0 +1,72 @@
+apiVersion: v1
+data:
+  mesh: |-
+    accessLogFile: /dev/stdout
+    accessLogEncoding: JSON
+    accessLogFormat: |-
+    {
+      # Request start time including milliseconds.
+      systemTime: '%START_TIME%'
+            # Bytes Received in the request body
+            bytesReceived: '%BYTES_RECEIVED%'
+            # Request Method
+            httpMethod: '%REQ(:METHOD)%'
+            # Protocol. Currently either HTTP/1.1 or HTTP/2.
+            protocol: '%PROTOCOL%'
+            # HTTP response code. Note that a response code of ‘0’ means that the server never sent the
+            # beginning of a response. This generally means that the (downstream) client disconnected.
+            responseCode: '%RESPONSE_CODE%'
+            # Total duration in milliseconds of the request from the start time to the last byte out
+            clientDuration: '%DURATION%'
+            # HTTP Response code details
+            responseCodeDetails: '%RESPONSE_CODE_DETAILS%'
+            # Connection termination details
+            connectionTerminationDetails: '%CONNECTION_TERMINATION_DETAILS%'
+            # Total duration in milliseconds of the request from the start time to the first byte read from the upstream host
+            targetDuration: '%RESPONSE_DURATION%'
+            # Value of the "x-envoy-original-path" header (falls back to "path" header if not present)
+            path: '%REQ(X-ENVOY-ORIGINAL-PATH?:PATH)%'
+            # Upstream cluster to which the upstream host belongs to
+            upstreamName: '%UPSTREAM_CLUSTER%'
+            # Unique tracking ID
+            requestId: '%REQ(X-REQUEST-ID)%'
+            # Response flags; will contain details about the response or connectiuon
+            responseFlags: '%RESPONSE_FLAGS%'
+            # Name of the route
+            routeName: `%ROUTE_NAME%`
+            # Remote address of the requester
+            downstreamRemoteAddress: '%DOWNSTREAM_REMOTE_ADDRESS%'
+            # Upstream host url
+            upstreamHost: '%UPSTREAM_HOST%'
+            # URIs present on the SAN of the local certificate used to establish downstream TLS
+            downstreamLocalURISan: '%DOWNSTREAM_LOCAL_URI_SAN%'
+            customHeader: '%MY_CUSTOM_HEADER%'
+    }
+    defaultConfig:
+      discoveryAddress: istiod.istio-system.svc:15012
+      proxyMetadata: {}
+      tracing:
+        zipkin:
+          address: zipkin.istio-system:9411
+    enablePrometheusMerge: true
+    rootNamespace: istio-system
+    trustDomain: cluster.local
+  meshNetworks: 'networks: {}'
+kind: ConfigMap
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","data":{"mesh":"accessLogFile: /dev/stdout\ndefaultConfig:\n  discoveryAddress: istiod.istio-system.svc:15012\n  proxyMetadata: {}\n  tracing:\n    zipkin:\n      address: zipkin.istio-system:9411\nenablePrometheusMerge: true\nrootNamespace: istio-system\ntrustDomain: cluster.local","meshNetworks":"networks: {}"},"kind":"ConfigMap","metadata":{"annotations":{},"labels":{"install.operator.istio.io/owning-resource":"unknown","install.operator.istio.io/owning-resource-namespace":"istio-system","istio.io/rev":"default","operator.istio.io/component":"Pilot","operator.istio.io/managed":"Reconcile","operator.istio.io/version":"1.15.3","release":"istio"},"name":"istio","namespace":"istio-system"}}
+  creationTimestamp: "2022-12-05T03:23:49Z"
+  labels:
+    install.operator.istio.io/owning-resource: unknown
+    install.operator.istio.io/owning-resource-namespace: istio-system
+    istio.io/rev: default
+    operator.istio.io/component: Pilot
+    operator.istio.io/managed: Reconcile
+    operator.istio.io/version: 1.15.3
+    release: istio
+  name: istio
+  namespace: istio-system
+  resourceVersion: "739"
+  uid: 785ccbc1-b680-4c26-8d91-d97402683d74

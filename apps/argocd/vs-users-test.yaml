@@ -1,0 +1,21 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: users-virtual-service
+spec:
+  hosts:
+    - users
+  http:
+  - match:
+    - headers:
+        end-user:
+          exact: tester
+    route:
+    - destination:
+        host: users
+        subset: v2
+  - name: default
+    route:
+    - destination:
+        host: users
+        subset: v1
